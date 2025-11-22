@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>Face Recognition Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 5px;
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .links {
+            margin-top: 15px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 15px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .video-wrapper {
+            border: 1px solid #ccc;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Face Recognition Attendance System</h1>
+    <p>Keep your face in front of the camera to mark attendance.</p>
+
+    <div class="video-wrapper">
+        <img src="{{ url_for('video_feed') }}" width="640" height="480" alt="Camera feed">
+    </div>
+
+    <div class="links">
+        <a href="{{ url_for('view_attendance') }}">View Attendance Records</a>
+    </div>
+</div>
+</body>
+</html>

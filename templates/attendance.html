@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <title>Attendance Records</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Attendance Records</h1>
+    <p><a href="{{ url_for('index') }}">⬅ Back to Camera</a></p>
+
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Name</th>
+            <th>Date &amp; Time</th>
+        </tr>
+        {% for row in records %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ row['Name'] }}</td>
+            <td>{{ row['DateTime'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
