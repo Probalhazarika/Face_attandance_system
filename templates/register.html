@@ -1,46 +1,60 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Teacher Registration</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; }
-        button { padding: 10px 20px; }
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+        }
     </style>
 </head>
+
 <body>
 
-<h2>Teacher Registration</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
+    <h2>Teacher Registration</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        <div>
-            {% for category, msg in messages %}
-                <div style="padding:8px; margin-bottom:8px; border-radius:4px;"
-                         {% if category == 'error' %}style="background:#f8d7da;color:#721c24; padding:8px;margin-bottom:8px;border-radius:4px;"{% endif %}>
-                    {{ msg }}
-                </div>
-            {% endfor %}
+    <div>
+        {% for category, msg in messages %}
+        <div style="padding:8px; margin-bottom:8px; border-radius:4px;" {% if category=='error'
+            %}style="background:#f8d7da;color:#721c24; padding:8px;margin-bottom:8px;border-radius:4px;" {% endif %}>
+            {{ msg }}
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
-{% endwith %}
+    {% endwith %}
 
-<form method="POST">
-    <label>Name</label>
-    <input type="text" name="name" required>
+    <form method="POST">
+        <label>Name</label>
+        <input type="text" name="name" required>
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+        <label>Email</label>
+        <input type="email" name="email" required>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
 
-    <label>Subjects (comma separated)</label>
-    <input type="text" name="subjects" placeholder="Python, OS, DBMS" required>
+        <label>Subjects (comma separated)</label>
+        <input type="text" name="subjects" placeholder="Python, OS, DBMS" required>
 
-    <button type="submit">Register</button>
-</form>
+        <button type="submit">Register</button>
+    </form>
 
-<a href="{{ url_for('login') }}">Already have an account? Login</a>
+    <a href="{{ url_for('auth.login') }}">Already have an account? Login</a>
 
 </body>
+
 </html>

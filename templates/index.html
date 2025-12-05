@@ -34,14 +34,14 @@
                     <p class="mb-4 text-muted">Welcome to the automated attendance system.</p>
 
                     <div class="d-grid gap-3">
-                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
                             Teacher Login
                         </a>
-                        <a href="{{ url_for('register') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary">
                             Teacher Register
                         </a>
                         <hr>
-                        <a href="{{ url_for('admin_login') }}" class="btn btn-dark">
+                        <a href="{{ url_for('admin.login') }}" class="btn btn-dark">
                             Admin Panel
                         </a>
                     </div>

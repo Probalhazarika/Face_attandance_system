@@ -29,11 +29,11 @@
         <h2 class="mb-4">Marking Attendance</h2>
 
         <div class="video-container mb-4">
-            <img src="{{ url_for('video_feed', subject_id=subject_id) }}" alt="Camera Feed">
+            <img src="{{ url_for('attendance.video_feed', subject_id=subject_id) }}" alt="Camera Feed">
         </div>
 
         <div class="d-flex justify-content-center gap-3">
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">
                 Stop / Back to Dashboard
             </a>
         </div>

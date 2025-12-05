@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Teacher Login</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; }
-        button { padding: 10px 20px; }
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+        }
     </style>
 </head>
+
 <body>
 
-<h2>Teacher Login</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
+    <h2>Teacher Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        <div>
-            {% for category, msg in messages %}
-                <div style="padding:8px; margin-bottom:8px; border-radius:4px;"
-                         {% if category == 'error' %}style="background:#f8d7da;color:#721c24; padding:8px;margin-bottom:8px;border-radius:4px;"{% endif %}>
-                    {{ msg }}
-                </div>
-            {% endfor %}
+    <div>
+        {% for category, msg in messages %}
+        <div style="padding:8px; margin-bottom:8px; border-radius:4px;" {% if category=='error'
+            %}style="background:#f8d7da;color:#721c24; padding:8px;margin-bottom:8px;border-radius:4px;" {% endif %}>
+            {{ msg }}
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
-{% endwith %}
+    {% endwith %}
 
-<form method="POST">
-    <label>Email</label>
-    <input type="email" name="email" required>
+    <form method="POST">
+        <label>Email</label>
+        <input type="email" name="email" required>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
 
-    <button type="submit">Login</button>
-</form>
+        <button type="submit">Login</button>
+    </form>
 
-<a href="{{ url_for('register') }}">Create new account</a>
+    <a href="{{ url_for('auth.register') }}">Create new account</a>
 
 </body>
+
 </html>
