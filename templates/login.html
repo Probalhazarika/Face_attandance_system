@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Teacher Registration</title>
+    <title>Teacher Login</title>
     <style>
         body { font-family: Arial; padding: 20px; }
         input { width: 100%; padding: 10px; margin: 8px 0; }
@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<h2>Teacher Registration</h2>
+<h2>Teacher Login</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         <div>
@@ -25,22 +25,16 @@
 {% endwith %}
 
 <form method="POST">
-    <label>Name</label>
-    <input type="text" name="name" required>
-
     <label>Email</label>
     <input type="email" name="email" required>
 
     <label>Password</label>
     <input type="password" name="password" required>
 
-    <label>Subjects (comma separated)</label>
-    <input type="text" name="subjects" placeholder="Python, OS, DBMS" required>
-
-    <button type="submit">Register</button>
+    <button type="submit">Login</button>
 </form>
 
-<a href="{{ url_for('login') }}">Already have an account? Login</a>
+<a href="{{ url_for('register') }}">Create new account</a>
 
 </body>
 </html>

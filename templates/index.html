@@ -1,51 +1,55 @@
 <!doctype html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Face Recognition Attendance System</title>
+    <meta charset="utf-8">
+    <title>Face Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
         }
-        h1 {
-            margin-bottom: 5px;
-        }
-        p {
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .container {
-            max-width: 800px;
-        }
-        .links {
-            margin-top: 15px;
-        }
-        a {
-            text-decoration: none;
-            color: #007bff;
-            margin-right: 15px;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .video-wrapper {
-            border: 1px solid #ccc;
-            display: inline-block;
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 15px;
+            color: #333;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>Face Recognition Attendance System</h1>
-    <p>Keep your face in front of the camera to mark attendance.</p>
 
-    <div class="video-wrapper">
-        <img src="{{ url_for('video_feed') }}" width="640" height="480" alt="Camera feed">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg p-5 text-center">
+                    <h1 class="mb-4">Face Attendance</h1>
+                    <p class="mb-4 text-muted">Welcome to the automated attendance system.</p>
+
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                            Teacher Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-primary">
+                            Teacher Register
+                        </a>
+                        <hr>
+                        <a href="{{ url_for('admin_login') }}" class="btn btn-dark">
+                            Admin Panel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="links">
-        <a href="{{ url_for('view_attendance') }}">View Attendance Records</a>
-    </div>
-</div>
 </body>
+
 </html>
