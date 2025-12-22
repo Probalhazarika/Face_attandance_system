@@ -18,3 +18,8 @@ model/*.pkl
 # Attendance records
 attendance/*.csv
 
+attendance.db
+*.db
+
+__pycache__/
+.DS_Store

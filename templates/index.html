@@ -1,55 +1,34 @@
-<!doctype html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8">
-    <title>Face Attendance System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
+{% block title %}Welcome | Face Attendance{% endblock %}
 
-        .card {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 15px;
-            color: #333;
-        }
-    </style>
-</head>
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-8 col-lg-6">
+        <div class="glass-card text-center slide-up">
+            <div class="mb-4">
+                <i class="fas fa-camera-retro fa-4x text-light mb-3"></i>
+                <h1 class="display-4 fw-bold">Face Attendance</h1>
+                <p class="lead text-muted">A smart, automated, and secure way to track attendance using facial
+                    recognition.</p>
+            </div>
 
-<body>
+            <div class="d-grid gap-3 d-sm-flex justify-content-center">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-premium btn-lg">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Login
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-premium btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
+            </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card shadow-lg p-5 text-center">
-                    <h1 class="mb-4">Face Attendance</h1>
-                    <p class="mb-4 text-muted">Welcome to the automated attendance system.</p>
-
-                    <div class="d-grid gap-3">
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
-                            Teacher Login
-                        </a>
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary">
-                            Teacher Register
-                        </a>
-                        <hr>
-                        <a href="{{ url_for('admin.login') }}" class="btn btn-dark">
-                            Admin Panel
-                        </a>
-                    </div>
-                </div>
+            <div class="mt-5 border-top border-secondary pt-4">
+                <p class="small text-muted mb-3">Administrator Access</p>
+                <a href="{{ url_for('admin.login') }}" class="btn btn-sm btn-outline-light px-4">
+                    <i class="fas fa-user-shield me-2"></i>Admin Panel
+                </a>
             </div>
         </div>
     </div>
-
-</body>
-
-</html>
+</div>
+{% endblock %}

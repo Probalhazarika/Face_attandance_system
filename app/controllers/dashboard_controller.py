@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, url_for
 from app.services.dashboard_service import DashboardService
+from datetime import datetime
 
 class DashboardController:
     @staticmethod
@@ -13,5 +14,6 @@ class DashboardController:
         return render_template(
             "dashboard.html",
             teacher_name=teacher_name,
-            subjects=subjects
+            subjects=subjects,
+            now=datetime.now()
         )

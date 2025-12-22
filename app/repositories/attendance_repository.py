@@ -12,6 +12,15 @@ class AttendanceRepository:
         cur = conn.cursor()
         
         try:
+            # Check if already marked
+            cur.execute(
+                "SELECT 1 FROM attendance WHERE subject_id = ? AND student_name = ? AND date = ?",
+                (subject_id, student_name, today)
+            )
+            if cur.fetchone():
+                print(f"[INFO] {student_name} already marked for Subject ID {subject_id} today.")
+                return False
+
             cur.execute(
                 "INSERT INTO attendance (subject_id, student_name, date, time) VALUES (?, ?, ?, ?)",
                 (subject_id, student_name, today, now_time)
@@ -19,9 +28,8 @@ class AttendanceRepository:
             conn.commit()
             print(f"[ATTENDANCE] Marked {student_name} for Subject ID {subject_id} at {now_time}")
             return True
-        except sqlite3.IntegrityError:
-            # Already marked for this subject today
-            print(f"[INFO] {student_name} already marked for Subject ID {subject_id} today.")
+        except sqlite3.Error as e:
+            print(f"[ERROR] Database error: {e}")
             return False
         finally:
             conn.close()

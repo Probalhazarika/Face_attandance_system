@@ -59,6 +59,18 @@ CREATE TABLE IF NOT EXISTS admins (
 );
 """)
 
+# -------------------------
+# CREATE STUDENTS TABLE
+# -------------------------
+cur.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    roll_number TEXT UNIQUE,
+    email TEXT
+);
+""")
+
 conn.commit()
 conn.close()
 

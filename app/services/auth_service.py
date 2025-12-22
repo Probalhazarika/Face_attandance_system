@@ -32,7 +32,7 @@ class AuthService:
     def register_admin(name, email, password):
         # Check if admin already exists
         if UserRepository.count_admins() > 0:
-            return False, "Admin already exists"
+            return False, "Access Denied: An administrator account already exists. Only one admin is allowed."
 
         hashed = generate_password_hash(password)
         success = UserRepository.create_admin(name, email, hashed)

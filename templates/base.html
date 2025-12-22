@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Face Attendance System{% endblock %}</title>
+
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <!-- Background Elements -->
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+
+    <!-- Navigation (Optional per page, but commonly useful) -->
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') if 'main.index' in url_for.__globals__ else '/' }}">
+                <i class="fas fa-camera-retro me-2"></i>Face Attendance
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user and current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link text-white">Hello, {{ current_user.name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-sm btn-logout ms-2" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <!-- Non-authenticated links can go here if needed -->
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show glass-alert"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Auto-dismiss alerts after 3 seconds with a smooth vertical collapse
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function (alert) {
+                    // Prepare for height transition
+                    alert.style.overflow = "hidden";
+                    alert.style.transition = "all 1s cubic-bezier(0.2, 0.8, 0.2, 1)";
+
+                    // Set precise height to current offsetHeight before collapsing to 0
+                    alert.style.height = alert.offsetHeight + "px";
+                    alert.offsetHeight; // Force reflow
+
+                    // Trigger collapse
+                    requestAnimationFrame(() => {
+                        alert.style.opacity = "0";
+                        alert.style.height = "0px";
+                        alert.style.marginTop = "0px";
+                        alert.style.marginBottom = "0px";
+                        alert.style.paddingTop = "0px";
+                        alert.style.paddingBottom = "0px";
+                        alert.style.border = "none";
+                    });
+
+                    // Remove after transition
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 1000);
+                });
+            }, 3000);
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
