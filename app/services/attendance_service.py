@@ -2,33 +2,37 @@ import cv2
 import os
 import pickle
 import time
+import numpy as np
 from app.repositories.attendance_repository import AttendanceRepository
 
+# Try to import face_recognition and sklearn
+try:
+    import face_recognition
+except ImportError:
+    face_recognition = None
+    print("[ERROR] 'face_recognition' library not found. Install it via pip.")
+
 # Load Model Global
-MODEL_PATH = "model/lbph_model.yml"
-LABELS_PATH = "model/lbph_labels.pkl"
+MODEL_PATH = "model/recognizer.pickle"
+LE_PATH = "model/le.pickle"
 
 recognizer = None
-label_names = {}
-face_cascade = None
+le = None
 
 def load_model():
-    global recognizer, label_names, face_cascade
-    if not os.path.exists(MODEL_PATH) or not os.path.exists(LABELS_PATH):
-        print("[WARN] Model not found. Face recognition will not work.")
+    global recognizer, le
+    if not os.path.exists(MODEL_PATH) or not os.path.exists(LE_PATH):
+        print(f"[WARN] SVM Model not found at {MODEL_PATH}. Run 'train_classifier.py' first.")
         return
 
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
-    recognizer.read(MODEL_PATH)
+    try:
+        recognizer = pickle.loads(open(MODEL_PATH, "rb").read())
+        le = pickle.loads(open(LE_PATH, "rb").read())
+        print("[INFO] Loaded Transformer-based Face Recognition Model (SVM Classifier).")
+    except Exception as e:
+        print(f"[ERROR] Failed to load model: {e}")
 
-    with open(LABELS_PATH, "rb") as f:
-        label_names = pickle.load(f)
-
-    haar_path = cv2.data.haarcascades + "haarcascade_frontalface_alt2.xml"
-    face_cascade = cv2.CascadeClassifier(haar_path)
-    print("[INFO] Loaded LBPH model and Haar cascade.")
-
-# Initialize on import (or could be lazy loaded)
+# Initialize on import
 load_model()
 
 class AttendanceService:
@@ -56,48 +60,106 @@ class AttendanceService:
     def gen_frames(subject_id):
         cap = cv2.VideoCapture(0)
         marked = set()
-        FACE_SIZE = (200, 200)
-        CONF_THRESHOLD = 95.0
-
+        
+        # Hyperparameters for Research/Tuning
+        CONF_THRESHOLD = 0.60  # 60% Confidence required
+        
         if not cap.isOpened():
             print("[ERROR] Could not open webcam.")
+            return
+
+        if face_recognition is None:
+            print("[ERROR] Library missing. Cannot run.")
             return
 
         while True:
             success, frame = cap.read()
             if not success:
                 break
+            
+            # Resize for faster processing (optional, but 0.25 is standard for speed)
+            # However, for accuracy in a major project, we might keep it or use 0.5
+            small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+            
+            # Convert BGR (OpenCV) to RGB (face_recognition)
+            rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
 
-            frame = cv2.flip(frame, 1)
-            frame = cv2.resize(frame, (640, 480))
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            gray = cv2.equalizeHist(gray)
+            # 1. Detect Faces (HOG method)
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            
+            # 2. Extract Embeddings (128-d vectors)
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-            if face_cascade:
-                faces = face_cascade.detectMultiScale(
-                    gray, scaleFactor=1.1, minNeighbors=3, minSize=(80, 80)
-                )
-
-                for (x, y, w, h) in faces:
-                    face_roi = gray[y:y + h, x:x + w]
-                    if face_roi.size == 0: continue
-                    
-                    face_roi = cv2.resize(face_roi, FACE_SIZE)
-                    
-                    name = "Unknown"
-                    confidence = 100.0
-                    
-                    if recognizer:
-                        label_id, confidence = recognizer.predict(face_roi)
-                        if confidence < CONF_THRESHOLD and 0 <= label_id < len(label_names):
-                            name = label_names[label_id]
+            face_data = []
+            
+            for face_encoding in face_encodings:
+                name = "Unknown"
+                confidence = 0.0
+                
+                if recognizer and le:
+                    # Check for KNN-style distance support
+                    if hasattr(recognizer, "kneighbors"):
+                        # KNN Logic: Use Euclidean distance
+                        # distance 0.0 = perfect match, > 0.6 = likely unknown
+                        dist_list, _ = recognizer.kneighbors([face_encoding], n_neighbors=1, return_distance=True)
+                        distance = dist_list[0][0]
+                        
+                        # Convert to "confidence" for display (1.0 - distance)
+                        confidence = 1.0 - distance
+                        
+                        # Thresholding: 0.50 as requested by user
+                        if distance < 0.50:
+                            # Valid match
+                            pred_idx = recognizer.predict([face_encoding])[0]
+                            name = le.inverse_transform([pred_idx])[0]
+                            
                             if name not in marked:
                                 AttendanceRepository.mark_attendance(subject_id, name)
                                 marked.add(name)
+                        else:
+                            name = "Unknown"
+                            
+                    else:
+                        # SVM / Probability Logic
+                        # reshape to (1, 128)
+                        preds = recognizer.predict_proba([face_encoding])[0]
+                        j = np.argmax(preds)
+                        confidence = preds[j]
+                        
+                        # 4. Manual Thresholding
+                        if confidence > CONF_THRESHOLD:
+                            name = le.classes_[j]
+                            if name not in marked:
+                                AttendanceRepository.mark_attendance(subject_id, name)
+                                marked.add(name)
+                
+                face_data.append((name, confidence))
 
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    cv2.putText(frame, f"{name} ({confidence:.1f})", (x, y - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                # Display results
+            for (top, right, bottom, left), (name, confidence) in zip(face_locations, face_data):
+                # Scale back up
+                top *= 2
+                right *= 2
+                bottom *= 2
+                left *= 2
+
+                # Calculate "Uncertainty" or "Distance-like" metric
+                # confidence is 0..1 (higher is better)
+                # val is 0..1 (higher is worse)
+                val = 1.0 - confidence
+
+                # Draw box
+                color = (0, 255, 0) if "Unknown" not in name else (0, 0, 255)
+                cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
+                
+                # Draw Name above
+                y_name = top - 15 if top - 15 > 15 else top + 15
+                cv2.putText(frame, name, (left, y_name), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color, 2)
+
+                # Draw Metric below the box
+                # Format: "Diff: 0.25"
+                text_val = f"Diff: {val:.2f}"
+                cv2.putText(frame, text_val, (left, bottom + 25), cv2.FONT_HERSHEY_SIMPLEX, 0.60, color, 2)
 
             ret, buffer = cv2.imencode(".jpg", frame)
             if not ret: continue
@@ -106,3 +168,4 @@ class AttendanceService:
                    b"Content-Type: image/jpeg\r\n\r\n" + buffer.tobytes() + b"\r\n")
             
             time.sleep(0.01)
+

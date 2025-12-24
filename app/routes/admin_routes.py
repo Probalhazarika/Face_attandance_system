@@ -28,6 +28,14 @@ def edit_teacher(teacher_id):
 def delete_teacher(teacher_id):
     return AdminController.delete_teacher(teacher_id)
 
+@admin_bp.route("/teacher/subject/add/<int:teacher_id>", methods=["POST"])
+def add_subject(teacher_id):
+    return AdminController.add_subject(teacher_id)
+
+@admin_bp.route("/teacher/subject/delete/<int:subject_id>")
+def delete_subject(subject_id):
+    return AdminController.delete_subject(subject_id)
+
 # Students
 @admin_bp.route("/student/add", methods=["POST"])
 def add_student():

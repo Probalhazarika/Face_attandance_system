@@ -1,5 +1,6 @@
 from app import get_db_connection
 import sqlite3
+from app.repositories.subject_repository import SubjectRepository
 
 class AdminService:
     # -----------------------------
@@ -10,7 +11,15 @@ class AdminService:
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute("SELECT * FROM teachers")
-        teachers = cur.fetchall()
+        start_teachers = cur.fetchall()
+        
+        # Convert to list of dicts and fetch subjects
+        teachers = []
+        for row in start_teachers:
+            t = dict(row)
+            t["subjects"] = SubjectRepository.get_subjects_by_teacher_id(t["id"])
+            teachers.append(t)
+            
         conn.close()
         return teachers
 
@@ -50,6 +59,25 @@ class AdminService:
         conn.commit()
         conn.close()
         return True, "Teacher deleted"
+
+    # -----------------------------
+    # SUBJECT MANAGEMENT
+    # -----------------------------
+    @staticmethod
+    def add_subject(teacher_id, subject_name):
+        try:
+            SubjectRepository.create_subject(teacher_id, subject_name)
+            return True, "Subject added successfully"
+        except Exception as e:
+            return False, f"Error adding subject: {e}"
+
+    @staticmethod
+    def delete_subject(subject_id):
+        try:
+            SubjectRepository.delete_subject(subject_id)
+            return True, "Subject deleted successfully"
+        except Exception as e:
+            return False, f"Error deleting subject: {e}"
 
     # -----------------------------
     # STUDENT MANAGEMENT

@@ -27,7 +27,14 @@
 
     <div class="col-12">
         <div class="glass-card">
-            <h4 class="mb-4 text-white"><i class="fas fa-book-open me-2"></i>Your Subjects</h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0 text-white"><i class="fas fa-book-open me-2"></i>Your Subjects</h4>
+                <button class="btn btn-success rounded-pill" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                    <i class="fas fa-plus me-2"></i>Add New Subject
+                </button>
+            </div>
+
+
 
             {% if subjects %}
             <div class="table-responsive">
@@ -67,6 +74,31 @@
                 <p class="text-muted">No subjects found for your account yet.</p>
             </div>
             {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<!-- Add Subject Modal (Moved outside glass-card to avoid backdrop/z-index issues) -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Add New Subject</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('dashboard.add_subject') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Subject Name</label>
+                        <input type="text" name="subject_name" class="form-control" placeholder="e.g. History 101"
+                            required>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="submit" class="btn btn-success">Add Subject</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

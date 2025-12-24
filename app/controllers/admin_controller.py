@@ -81,6 +81,24 @@ class AdminController:
         flash(msg, "success" if success else "error")
         return redirect(url_for('admin.dashboard'))
 
+    # --- SUBJECT CRUD ---
+    @staticmethod
+    def add_subject(teacher_id):
+        if request.method == "POST":
+            subject_name = request.form.get("subject_name")
+            if not subject_name:
+                flash("Subject name is required", "error")
+            else:
+                success, msg = AdminService.add_subject(teacher_id, subject_name)
+                flash(msg, "success" if success else "error")
+        return redirect(url_for('admin.dashboard'))
+
+    @staticmethod
+    def delete_subject(subject_id):
+        success, msg = AdminService.delete_subject(subject_id)
+        flash(msg, "success" if success else "error")
+        return redirect(url_for('admin.dashboard'))
+
     # --- STUDENT CRUD ---
     @staticmethod
     def add_student():

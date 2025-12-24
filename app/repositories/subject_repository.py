@@ -32,3 +32,11 @@ class SubjectRepository:
         subjects = [dict(row) for row in cur.fetchall()]
         conn.close()
         return subjects
+
+    @staticmethod
+    def delete_subject(subject_id):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM subjects WHERE id = ?", (subject_id,))
+        conn.commit()
+        conn.close()

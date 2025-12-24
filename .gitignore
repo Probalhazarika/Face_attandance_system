@@ -23,3 +23,7 @@ attendance.db
 
 __pycache__/
 .DS_Store
+
+model/*.pickle
+model/*.yml
+.env

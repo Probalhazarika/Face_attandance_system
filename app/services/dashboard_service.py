@@ -11,6 +11,14 @@ class DashboardService:
         return teacher_name, subjects
 
     @staticmethod
+    def add_subject(teacher_id, subject_name):
+        try:
+            SubjectRepository.create_subject(teacher_id, subject_name)
+            return True, "Subject added successfully"
+        except Exception as e:
+            return False, f"Error adding subject: {e}"
+
+    @staticmethod
     def get_admin_dashboard():
         teachers = UserRepository.get_all_teachers()
         teachers_data = []
